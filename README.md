@@ -6,5 +6,5 @@ If you have other micro:bits with the "A-Shaky-Start-Talk-Timer" program it broa
 
 This is written in MicroPython.
 
-A little trivia - the first submit was made when on a train journey between Cromford to Nottingham when approaching Derby.
+A little trivia - the first submit was made from a Chromebook when on a train journey between Cromford to Nottingham when approaching Derby.
 
