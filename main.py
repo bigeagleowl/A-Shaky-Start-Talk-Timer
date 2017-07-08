@@ -37,6 +37,8 @@ def CountDown(delay):
     StartUpScreen()        
     return
 
+def MinutesToDelay(minutes):
+    return minutes * 60 * 1000 / 25
 
 on = Image( "99999:"
             "99999:"
@@ -45,9 +47,10 @@ on = Image( "99999:"
             "99999")
             
 # set the number minutes that your talk is to last for.
-minutes = 1
+minutes = 25/60
 
-delay = minutes * 60 * 1000 / 25
+#convert to the delay needed to turn off each LED
+delay = MinutesToDelay(minutes)
 
 # Main code starts here
 
@@ -64,6 +67,12 @@ while True:
 
     #Show I am alive                
     ShowPowerOn()
+    
+    # Enter demo mode with a short fixed talk time
+    if button_a.is_pressed():
+        delay = MinutesToDelay(15/60)
+        display.scroll("Debug mode - 15 secs")
+        
 
     if accelerometer.current_gesture() == "shake":
         send_message = True
