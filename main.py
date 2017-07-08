@@ -1,6 +1,7 @@
 from microbit import *
 import radio
 
+
 def StartUpScreen():
     display.show(Image.ALL_CLOCKS, delay=100, loop=False, clear=True)
     return   
@@ -104,8 +105,14 @@ radio.on()
 while True:
     
     if radio.receive() == 'start':
-        CountDown(delay)
-        GetReadyToGoAgain()
+        #Need to get the duration from the remote microbit
+        while True:
+            remotetalklength = radio.receive()
+            if remotetalklength is not None:
+                delay=float(remotetalklength)
+                CountDown(delay)
+                GetReadyToGoAgain()
+                break
 
     #Show number of mins                
     DisplayMinutes(DelayToMinutes(delay))
@@ -131,10 +138,15 @@ while True:
         while accelerometer.current_gesture() == "shake":
             if radio.receive() == "start":
                 send_message = False
-                break
+                while True:
+                    remotetalklength = radio.receive()
+                    if remotetalklength is not None:
+                        delay=float(remotetalklength)
+                        break
         
         if send_message:
-            radio.send('start')
+            radio.send("start")
+            radio.send(str(delay))
             
         CountDown(delay)
         GetReadyToGoAgain()
