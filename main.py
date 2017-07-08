@@ -28,24 +28,31 @@ def CountDown(delay):
     x=0 
     y=0
     display.show(on)
-    sleep (delay)
+    
     for y in range(5):
         for x in range(5):
-            display.set_pixel(x, y, 0)
             sleep(delay)
+            display.set_pixel(x, y, 0)
+            
     StartUpScreen()        
     return
 
-
-StartUpScreen()
-ShowPowerOn()
 
 on = Image( "99999:"
             "99999:"
             "99999:"
             "99999:"
             "99999")
-delay = 200
+            
+# set the number minutes that your talk is to last for.
+minutes = 1
+
+delay = minutes * 60 * 1000 / 25
+
+# Main code starts here
+
+StartUpScreen()
+ShowPowerOn()
 
 radio.on()
 
@@ -71,4 +78,4 @@ while True:
         CountDown(delay)
         GetReadyToGoAgain()
         
-      
+        
