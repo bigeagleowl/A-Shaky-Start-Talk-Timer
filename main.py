@@ -1,16 +1,29 @@
 from microbit import *
 import radio
 
+def StartUpScreen():
+    display.show(Image.ALL_CLOCKS, delay=100, loop=False, clear=True)
+    return   
+
 def ShowPowerOn():
     display.set_pixel(0, 0, 9)
     return   
 
 def ClearMessageBuffer():
-    incoming = radio.receive()
-    while incoming == 'start':
-        incoming = radio.receive()
+    while radio.receive() != None:
+        pass
     return
 
+def WaitTillShakingStops():
+    while accelerometer.current_gesture() == "shake":
+        pass
+    return
+
+def GetReadyToGoAgain():
+    ClearMessageBuffer()
+    WaitTillShakingStops()
+    return
+    
 def CountDown(delay):
     x=0 
     y=0
@@ -20,9 +33,11 @@ def CountDown(delay):
         for x in range(5):
             display.set_pixel(x, y, 0)
             sleep(delay)
+    StartUpScreen()        
     return
 
-#Show I am alive
+
+StartUpScreen()
 ShowPowerOn()
 
 on = Image( "99999:"
@@ -37,20 +52,23 @@ radio.on()
 while True:
     
     if radio.receive() == 'start':
-        CountDown(delay) 
-        ClearMessageBuffer()
-    
+        CountDown(delay)
+        GetReadyToGoAgain()
+
     #Show I am alive                
     ShowPowerOn()
-    # Clear the message buffer as it is not known how many shake messages are sent.        
 
-    if accelerometer.current_gesture() == "shake":            
-        radio.send('start')
-        CountDown(delay) 
+    if accelerometer.current_gesture() == "shake":
+        send_message = True
         while accelerometer.current_gesture() == "shake":
-            pass
+            if radio.receive() == "start":
+                send_message = False
+                break
         
- 
+        if send_message:
+            radio.send('start')
+            
+        CountDown(delay)
+        GetReadyToGoAgain()
         
-        
- 
+      
