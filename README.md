@@ -6,7 +6,7 @@ To set the talk length just set the variable minutes to the duration you want th
 
 If you have other micro:bits with the "A-Shaky-Start-Talk-Timer" program it broadcasts a start message, which causes then to count down too - cool eh!
 
-If you press button A whilst not counting down, this sets the timer into debug mode whichs sets the talk duration to 15 seconds.
+If you press button A whilst not counting down, this sets the timer into debug mode whichs sets the talk duration to 15 seconds. To exit debug mode just press the reset button.
 
 This is written in MicroPython.
 
