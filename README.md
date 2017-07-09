@@ -10,6 +10,10 @@ This is written in MicroPython.
 
 If you press button B for more than 2 seconds whilst not counting down, this sets the timer into debug mode which sets the talk duration to 15 seconds. To exit debug mode just press the reset button.
 
+The radio message being sent has the format "asstt COMMAND PAYLOAD" as it sent as a string. For the COMMAND start, the PAYLOAD is the talk length/25 i.e. the delay to switch off each LED.
+
 A little trivia - the first submit was made from a Chromebook when on a train journey between Cromford to Nottingham when approaching Derby. Just after Derby saw the Britian’s rarest train the “Flying Banana” aka the New Measurement Train.
+
+
 
 
