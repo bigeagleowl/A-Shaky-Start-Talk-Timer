@@ -84,6 +84,15 @@ def MinutesToDelay(minutes):
 def DelayToMinutes(delay):
     return delay * 25 / (60 * 1000)
 
+def MessageToDelay(receivedmess):
+    if receivedmess is not None:
+        asstdev, started, remotetime = receivedmess.split()
+        
+        if asstdev == shakyId and started == "start":
+            return float(remotetime)
+        
+    return -1
+        
 
 on = Image( "99999:"
             "99999:"
@@ -108,14 +117,12 @@ while True:
     
     receivedmess = radio.receive()
     
-    if receivedmess is not None:
-        asstdev, started, remotetime = receivedmess.split()
-        
-        if asstdev == shakyId and started == "start":
-                delay=float(remotetime)
-                CountDown(delay)
-                GetReadyToGoAgain()
-                break
+    delayFromRemote = MessageToDelay(receivedmess)
+    
+    if delayFromRemote >= 0:
+        delay = delayFromRemote
+        CountDown(delay)
+        GetReadyToGoAgain()
 
     #Show number of mins                
     DisplayMinutes(DelayToMinutes(delay))
