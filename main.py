@@ -1,6 +1,8 @@
 from microbit import *
 import radio
 
+#A Staky Start Talk Time
+shakyId = "asstt" 
 
 def StartUpScreen():
     display.show(Image.ALL_CLOCKS, delay=100, loop=False, clear=True)
@@ -104,12 +106,13 @@ radio.on()
 
 while True:
     
-    if radio.receive() == 'start':
-        #Need to get the duration from the remote microbit
-        while True:
-            remotetalklength = radio.receive()
-            if remotetalklength is not None:
-                delay=float(remotetalklength)
+    receivedmess = radio.receive()
+    
+    if receivedmess is not None:
+        asstdev, started, remotetime = receivedmess.split()
+        
+        if asstdev == shakyId and started == "start":
+                delay=float(remotetime)
                 CountDown(delay)
                 GetReadyToGoAgain()
                 break
@@ -145,8 +148,8 @@ while True:
                         break
         
         if send_message:
-            radio.send("start")
-            radio.send(str(delay))
+            radio.send(shakyId + " " + "start " + str(delay))
+            
             
         CountDown(delay)
         GetReadyToGoAgain()
