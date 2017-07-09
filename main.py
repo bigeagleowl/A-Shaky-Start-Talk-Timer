@@ -34,10 +34,15 @@ def CountDown(delay):
     
     for y in range(5):
         for x in range(5):
-            sleep(delay)
+            wait = delay
+            while wait >= 300:
+                sleep(300)
+                wait -= 300
+                if AbandonTalk() == True:
+                    return
+                
+            sleep(wait)
             display.set_pixel(x, y, 0)
-            if AbandonTalk() == True:
-                return
             
     StartUpScreen()        
     return
