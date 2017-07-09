@@ -146,14 +146,11 @@ while True:
     if accelerometer.current_gesture() == "shake":
         send_message = True
         while accelerometer.current_gesture() == "shake":
-            if radio.receive() == "start":
+            delayFromRemote = MessageToDelay(receivedmess)
+            if delayFromRemote >= 0:
+                delay = delayFromRemote
                 send_message = False
-                while True:
-                    remotetalklength = radio.receive()
-                    if remotetalklength is not None:
-                        delay=float(remotetalklength)
-                        break
-        
+
         if send_message:
             radio.send(shakyId + " " + "start " + str(delay))
             
