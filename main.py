@@ -1,6 +1,8 @@
 from microbit import *
 import radio
 
+#A Staky Start Talk Time
+shakyId = "asstt" 
 
 def StartUpScreen():
     display.show(Image.ALL_CLOCKS, delay=100, loop=False, clear=True)
@@ -82,6 +84,15 @@ def MinutesToDelay(minutes):
 def DelayToMinutes(delay):
     return delay * 25 / (60 * 1000)
 
+def MessageToDelay(receivedmess):
+    if receivedmess is not None:
+        asstdev, started, remotetime = receivedmess.split()
+        
+        if asstdev == shakyId and started == "start":
+            return float(remotetime)
+        
+    return -1
+        
 
 on = Image( "99999:"
             "99999:"
@@ -104,15 +115,14 @@ radio.on()
 
 while True:
     
-    if radio.receive() == 'start':
-        #Need to get the duration from the remote microbit
-        while True:
-            remotetalklength = radio.receive()
-            if remotetalklength is not None:
-                delay=float(remotetalklength)
-                CountDown(delay)
-                GetReadyToGoAgain()
-                break
+    receivedmess = radio.receive()
+    
+    delayFromRemote = MessageToDelay(receivedmess)
+    
+    if delayFromRemote >= 0:
+        delay = delayFromRemote
+        CountDown(delay)
+        GetReadyToGoAgain()
 
     #Show number of mins                
     DisplayMinutes(DelayToMinutes(delay))
@@ -136,17 +146,14 @@ while True:
     if accelerometer.current_gesture() == "shake":
         send_message = True
         while accelerometer.current_gesture() == "shake":
-            if radio.receive() == "start":
+            delayFromRemote = MessageToDelay(receivedmess)
+            if delayFromRemote >= 0:
+                delay = delayFromRemote
                 send_message = False
-                while True:
-                    remotetalklength = radio.receive()
-                    if remotetalklength is not None:
-                        delay=float(remotetalklength)
-                        break
-        
+
         if send_message:
-            radio.send("start")
-            radio.send(str(delay))
+            radio.send(shakyId + " " + "start " + str(delay))
+            
             
         CountDown(delay)
         GetReadyToGoAgain()
