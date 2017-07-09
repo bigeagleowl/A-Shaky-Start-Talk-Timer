@@ -36,6 +36,8 @@ def CountDown(delay):
         for x in range(5):
             sleep(delay)
             display.set_pixel(x, y, 0)
+            if AbandonTalk() == True:
+                return
             
     StartUpScreen()        
     return
@@ -92,7 +94,24 @@ def MessageToDelay(receivedmess):
             return float(remotetime)
         
     return -1
+    
+def AbandonTalk():
+    if button_a.is_pressed():
+        radio.send(shakyId + " " + "stop")
+        display.show(Image.SKULL)
+        while button_a.is_pressed():
+            pass
+        return True
         
+    receivedmess = radio.receive()
+    if receivedmess is not None:
+        asstdev, stopped = receivedmess.split()
+        
+        if asstdev == shakyId and stopped == "stop":
+            return True
+        
+    return False    
+    
 
 on = Image( "99999:"
             "99999:"
