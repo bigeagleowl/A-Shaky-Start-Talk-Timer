@@ -10,7 +10,7 @@ To abandon a count down, press button A.
 
 This is written in MicroPython.
 
-If you press button B for more than 2 seconds whilst not counting down, this sets the timer into debug mode which sets the talk duration to 15 seconds. To exit debug mode just press the reset button.
+If you press button B for more than 2 seconds whilst not counting down, this sets the timer into debug mode which sets the talk duration to 15 seconds. This will display as a single dimly lit LED. To exit debug mode, use button A to set a new talk duration
 
 The radio message being sent has the format "asstt COMMAND PAYLOAD" as it sent as a string. For the COMMAND start, the PAYLOAD is the talk length/25 i.e. the delay to switch off each LED. The other COMMAND is stop and it has no PAYLOAD.
 
