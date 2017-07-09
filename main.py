@@ -58,8 +58,11 @@ def DisplayMinutes(minutes):
             if (i<=minutes):
                 display.set_pixel(x, y, 9)
             else: 
-                display.set_pixel(x, y, 0)
-                
+                if x == 0 and y == 0 and minutes < 1:
+                    display.set_pixel(x, y, 4)
+                else:
+                    display.set_pixel(x, y, 0)
+        
 
 def GetTalkTime(minutes):
     display.scroll("A -1, B +1")
