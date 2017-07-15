@@ -41,6 +41,17 @@ def CountDown(delay):
                 if AbandonTalk() == True:
                     return
                 
+                #Flash the last row, so make it clear that the talk is coming to an end
+                if y == 4:
+                    for i in range(x,5):
+                        brightness = display.get_pixel(i, y)
+                        if (brightness == 0): 
+                            brightness = 9
+                        else:
+                            brightness = 0
+                        display.set_pixel(i, y, brightness)
+                        
+                
             sleep(wait)
             display.set_pixel(x, y, 0)
             
@@ -184,5 +195,3 @@ while True:
             
         CountDown(delay)
         GetReadyToGoAgain()
-        
-        
