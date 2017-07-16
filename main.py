@@ -124,7 +124,10 @@ def AbandonTalk():
         
     receivedmess = radio.receive()
     if receivedmess is not None:
-        asstdev, stopped = receivedmess.split()
+        try:
+            asstdev, stopped = receivedmess.split()
+        except ValueError:
+            return False
         
         if asstdev == shakyId and stopped == "stop":
             return True
@@ -195,3 +198,5 @@ while True:
             
         CountDown(delay)
         GetReadyToGoAgain()
+        
+        
