@@ -1,92 +1,97 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from microbit import *
+"""A Timer for the MicroBit"""
+from microbit import display, accelerometer, sleep, button_a, button_b, running_time, Image
 import radio
 
 # A Staky Start Talk Time
 
-shakyId = 'asstt'
+SHAKY_ID = 'asstt'
 
 
-def StartUpScreen():
+def start_up_screen():
+    """Display the start up screen"""
     display.show(Image.ALL_CLOCKS, delay=100, loop=False, clear=True)
     return
 
 
-def ShowPowerOn():
+def show_power_on():
+    """Display power on configuration"""
     display.set_pixel(0, 0, 9)
     return
 
 
-def ClearMessageBuffer():
+def clear_message_buffer():
+    """Wait until radio buffer is clear"""
     while radio.receive() is not None:
         pass
     return
 
 
-def WaitTillShakingStops():
+def wait_till_shaking_stops():
+    """Wait until shaking stops"""
     while accelerometer.current_gesture() == 'shake':
         pass
     return
 
 
-def GetReadyToGoAgain():
-    ClearMessageBuffer()
-    WaitTillShakingStops()
+def get_ready_to_go_again():
+    """Reset Timer"""
+    clear_message_buffer()
+    wait_till_shaking_stops()
     return
 
 
-def CountDown(delay):
-    x = 0
-    y = 0
-    display.show(on)
+def count_down(delay):
+    """Count down and show progress"""
+    on_image = Image('99999:99999:99999:99999:99999')
+    display.show(on_image)
 
-    for y in range(5):
-        for x in range(5):
+    for y_coord in range(5):
+        for x_coord in range(5):
             wait = delay
             while wait >= 300:
                 sleep(300)
                 wait -= 300
-                if AbandonTalk() is True:
+                if abandon_talk() is True:
                     return
 
                 # Flash the last row, so making it clear that
                 # the talk is coming to an end
 
-                if y == 4:
-                    for i in range(x, 5):
-                        brightness = display.get_pixel(i, y)
+                if y_coord == 4:
+                    for i in range(x_coord, 5):
+                        brightness = display.get_pixel(i, y_coord)
                         if brightness == 0:
                             brightness = 9
                         else:
                             brightness = 0
-                        display.set_pixel(i, y, brightness)
+                        display.set_pixel(i, y_coord, brightness)
 
             sleep(wait)
-            display.set_pixel(x, y, 0)
+            display.set_pixel(x_coord, y_coord, 0)
 
-    StartUpScreen()
+    start_up_screen()
     return
 
 
-def DisplayMinutes(minutes):
-    x = 0
-    y = 0
+def display_minutes(minutes):
+    """Show minutes"""
     i = 0
-
-    for y in range(5):
-        for x in range(5):
+    for y_coord in range(5):
+        for x_coord in range(5):
             i += 1
             if i <= minutes:
-                display.set_pixel(x, y, 9)
+                display.set_pixel(x_coord, y_coord, 9)
             else:
-                if x == 0 and y == 0 and minutes < 1:
-                    display.set_pixel(x, y, 4)
+                if x_coord == 0 and y_coord == 0 and minutes < 1:
+                    display.set_pixel(x_coord, y_coord, 4)
                 else:
-                    display.set_pixel(x, y, 0)
+                    display.set_pixel(x_coord, y_coord, 0)
 
 
-def GetTalkTime(minutes):
+def get_talk_time(minutes):
+    """Setup talk time"""
     display.scroll('A -1, B +1')
 
     # clear press counters
@@ -94,12 +99,12 @@ def GetTalkTime(minutes):
     button_a.get_presses()
     button_b.get_presses()
 
-    quit = False
+    quit_flag = False
 
-    while quit is not True:
+    while quit_flag is not True:
         minutes = minutes - button_a.get_presses() \
             + button_b.get_presses()
-        DisplayMinutes(int(minutes))
+        display_minutes(int(minutes))
 
         # To exit press a for 2 seconds
 
@@ -108,33 +113,37 @@ def GetTalkTime(minutes):
 
             while button_a.is_pressed():
                 if running_time() - start > 2000:
-                    quit = True
+                    quit_flag = True
                     display.scroll(str(int(minutes)))
 
     return minutes
 
 
-def MinutesToDelay(minutes):
+def minutes_to_delay(minutes):
+    """Compute delay from minutes"""
     return minutes * 60 * 1000 / 25
 
 
-def DelayToMinutes(delay):
+def delay_to_minutes(delay):
+    """Compute minutes from delay"""
     return delay * 25 / (60 * 1000)
 
 
-def MessageToDelay(receivedmess):
+def message_to_delay(receivedmess):
+    """Get delay from radio"""
     if receivedmess is not None:
         (asstdev, started, remotetime) = receivedmess.split()
 
-        if asstdev == shakyId and started == 'start':
+        if asstdev == SHAKY_ID and started == 'start':
             return float(remotetime)
 
     return -1
 
 
-def AbandonTalk():
+def abandon_talk():
+    """Abandon talk"""
     if button_a.is_pressed():
-        radio.send(shakyId + ' ' + 'stop')
+        radio.send(SHAKY_ID + ' ' + 'stop')
         display.show(Image.SKULL)
         while button_a.is_pressed():
             pass
@@ -147,71 +156,72 @@ def AbandonTalk():
         except ValueError:
             return False
 
-        if asstdev == shakyId and stopped == 'stop':
+        if asstdev == SHAKY_ID and stopped == 'stop':
             return True
 
     return False
 
 
-on = Image('99999:99999:99999:99999:99999')
+def main():
+    """Main function for the timer"""
 
-# set the number minutes that your talk is to last for.
+    # set the number minutes that your talk is to last for.
+    minutes = 1
 
-minutes = 1
+    # convert to the delay needed to turn off each LED
+    delay = minutes_to_delay(minutes)
 
-# convert to the delay needed to turn off each LED
+    start_up_screen()
+    show_power_on()
 
-delay = MinutesToDelay(minutes)
+    radio.on()
 
-# Main code starts here
+    while True:
 
-StartUpScreen()
-ShowPowerOn()
+        received_message = radio.receive()
 
-radio.on()
+        delay_from_remote = message_to_delay(received_message)
 
-while True:
+        if delay_from_remote >= 0:
+            delay = delay_from_remote
+            count_down(delay)
+            get_ready_to_go_again()
 
-    receivedmess = radio.receive()
+        # Show number of mins
 
-    delayFromRemote = MessageToDelay(receivedmess)
+        display_minutes(delay_to_minutes(delay))
 
-    if delayFromRemote >= 0:
-        delay = delayFromRemote
-        CountDown(delay)
-        GetReadyToGoAgain()
+        # To enter demo mode press button a for > 2 secs
 
-    # Show number of mins
+        if button_b.is_pressed():
+            start = running_time()
 
-    DisplayMinutes(DelayToMinutes(delay))
+            while button_b.is_pressed():
+                pass
 
-    # To enter demo mode press button a for > 2 secs
+            if running_time() - start > 2000:
+                delay = minutes_to_delay(15 / 60)
+                display.scroll('Talk 15 secs')
 
-    if button_b.is_pressed():
-        start = running_time()
+        if button_a.is_pressed():
+            delay = minutes_to_delay(get_talk_time(delay_to_minutes(delay)))
+            start_up_screen()
+            display_minutes(delay_to_minutes(delay))
 
-        while button_b.is_pressed():
-            pass
+        if accelerometer.current_gesture() == 'shake':
+            send_message = True
+            while accelerometer.current_gesture() == 'shake':
+                delay_from_remote = message_to_delay(received_message)
+                if delay_from_remote >= 0:
+                    delay = delay_from_remote
+                    send_message = False
 
-        if running_time() - start > 2000:
-            delay = MinutesToDelay(15 / 60)
-            display.scroll('Talk 15 secs')
+            if send_message:
+                radio.send(SHAKY_ID + ' ' + 'start ' + str(delay))
 
-    if button_a.is_pressed():
-        delay = MinutesToDelay(GetTalkTime(DelayToMinutes(delay)))
-        StartUpScreen()
-        DisplayMinutes(DelayToMinutes(delay))
+            count_down(delay)
+            get_ready_to_go_again()
 
-    if accelerometer.current_gesture() == 'shake':
-        send_message = True
-        while accelerometer.current_gesture() == 'shake':
-            delayFromRemote = MessageToDelay(receivedmess)
-            if delayFromRemote >= 0:
-                delay = delayFromRemote
-                send_message = False
 
-        if send_message:
-            radio.send(shakyId + ' ' + 'start ' + str(delay))
-
-        CountDown(delay)
-        GetReadyToGoAgain()
+if __name__ == "__main__":
+    main()
