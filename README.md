@@ -2,7 +2,7 @@
 
 This is a BBC micro:bit count down talk timer to tell you how much time you have left to complete your talk. 
 
-**You start the timer** by **shaking** the micro:bit. It gives you a visual indication as to the time left to give your talk. It starts counting down when you stop shaking it. Initially it lights all LEDs, and as time passes it progressively switches then off. When your time is up it displays a clock animation :-)  
+**You start the timer** by **shaking** the micro:bit - see [short video](https://github.com/bigeagleowl/A-Shaky-Start-Talk-Timer/releases/download/v0.9.3/short_intro.mp4). It gives you a visual indication as to the time left to give your talk. It starts counting down when you stop shaking it. Initially it lights all LEDs, and as time passes it progressively switches then off. When your time is up it displays a clock animation :-)  
 
 **To abandon a count down**, press button A when it is timing a talk.
 
