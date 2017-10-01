@@ -15,6 +15,8 @@ This is a BBC micro:bit count down talk timer to tell you how much time you have
 
 **Broadcasting to other microbits** - If you have other micro:bits with the "A-Shaky-Start-Talk-Timer" program it broadcasts a start message plus talk duration, which causes them to count down in the same way too - cool eh!
 
+**Teachers, Mentors** - You are very welcome to use this to help make coding fun - in fact that is the whole point. If you have an idea for an improvement, just add an [issue](https://github.com/bigeagleowl/A-Shaky-Start-Talk-Timer/issues) describing your suggestion :-)  
+
 This is written in MicroPython.
 
 **Debug mode** - If you press button B for more than 2 seconds whilst not counting down, this sets the timer into debug mode which sets the talk duration to 15 seconds. This will display as a single dimly lit LED. To exit debug mode, use button A to set a new talk duration.
